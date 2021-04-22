@@ -1,30 +1,50 @@
 <template>
   <BLayout>
-      <h2>category</h2>
+      <div class="ui grid">
+          <div v-for="p in products" :key="p.id"
+        class="sixteen wide mobile eight wide tablet four wide computer column">
+          <Product :product="p"/>
+
+        </div>
+      </div>
   </BLayout>
 </template>
 
 <script>
 import BLayout from "../layouts/BasicLayout.vue";
 import { ref , onMounted} from "vue";
-import * as Yup from "yup";
-import { loginApi } from '../api/user.js'
-import { useRouter } from 'vue-router';
-import { setTokenApi, getTokenApi } from '../api/token.js';
+import { getPorductsCategory, getProductsApi } from '../api/product';
+import {useRoute} from'vue-router';
+import Product from '../components/Product';
 
 export default {
     name: "Category",
     components: {
-        BLayout
+        BLayout, Product
     },
     watch:{
         $route(to, from){
-            console.log(to);
+            this.getProducts(to.params.category);
         }
     },
-    setup(){
-        return {
 
+    setup(){
+        let products = ref(null);
+
+        const { params } = useRoute();
+
+        onMounted( async ()=>{
+            getProducts(params.category);
+        });
+
+        const getProducts = async (cat)=>{
+            const response = await getPorductsCategory(cat);
+            products.value = response;
+        };
+
+        return {
+            getProducts,
+            products,
         }
     }
 }
