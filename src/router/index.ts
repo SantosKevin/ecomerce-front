@@ -3,6 +3,8 @@ import Home from '../views/Home.vue'
 import Login from '../views/Login.vue';
 import Register from '../views/Register.vue';
 import Category from '../views/Category.vue';
+import Cart from '../views/Cart.vue';
+import Orders from '../views/Orders.vue';
 
 
 const routes: Array<RouteRecordRaw> = [
@@ -20,6 +22,16 @@ const routes: Array<RouteRecordRaw> = [
     path: '/register',
     name: 'Register',
     component: Register
+  },
+  {
+    path: '/cart',
+    name: 'Cart',
+    component: Cart
+  },
+  {
+    path: '/orders',
+    name: 'Orders',
+    component: Orders
   },
   //dinamic router should be to the end
   {

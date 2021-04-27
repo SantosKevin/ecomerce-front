@@ -17,13 +17,13 @@ export function getCartApi(){
 
 export async function getProductsCartApi(){
     const idProducts = getCartApi();
-
-    if(idProducts.lenght === 0) return null;
+    
+    if(idProducts.length === 0) return null;
 
     try {
         const products = [];
         for await (const idP of idProducts){
-            const response =  fetch(`${API_URL}/products/${idP}`);
+            const response = await fetch(`${API_URL}/products/${idP}`);
             const result = await response.json();
             products.push(result);
         }
@@ -37,9 +37,38 @@ export async function getProductsCartApi(){
             pTemp.quantity = productsCount[p.name];
             return pTemp.name;
         })
-        console.log(combined);
+
+        return combined;
+
     } catch (error) {
         console.log(error);
         return null;
     }
+}
+
+export function deleteProductCartApi(idP){
+    const products = getCartApi();
+
+    const index = products.indexOf(idP);
+    if(index > -1) products.splice(index, 1);
+
+    localStorage.setItem(PRODUCTS, JSON.stringify(products));
+}
+
+export function deleteAllProductCartApi(idP){
+    const products = getCartApi();
+
+    const index = products.indexOf(idP);
+
+    if(index > -1){
+        products.splice(index, 1);
+        localStorage.setItem(PRODUCTS, JSON.stringify(products));
+        deleteAllProductCartApi(idP);
+    }
+     
+
+}
+
+export function deleteCartApi(){
+    localStorage.removeItem(PRODUCTS);
 }

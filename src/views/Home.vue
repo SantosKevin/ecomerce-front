@@ -4,42 +4,57 @@
       <h1>Latest Products</h1>
 
       <div class="ui grid">
-        <div v-for="p in products" :key="p.id"
-        class="sixteen wide mobile eight wide tablet four wide computer column">
-          <Product :product="p"/>
-
+        <div
+          v-for="p in products"
+          :key="p.id"
+          class="sixteen wide mobile eight wide tablet four wide computer column"
+        >
+          <Product :product="p" />
         </div>
       </div>
     </BLayout>
+
+    <hr />
+
+    <Suspense>
+      <template #default>
+        <Chat />
+      </template>
+      <template #fallback>
+        <Loader />
+      </template>
+    </Suspense>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref , onMounted} from 'vue';
-import BLayout from '../layouts/BasicLayout.vue';
-import { getProductsApi } from '../api/product.js';
-import Product from '../components/Product.vue';
+import { defineAsyncComponent } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
+import BLayout from "../layouts/BasicLayout.vue";
+import { getProductsApi } from "../api/product.js";
+import Product from "../components/Product.vue";
+import Loader from "../components/Loader.vue";
 
 export default {
-  name: 'Home',
+  name: "Home",
   components: {
     BLayout,
-    Product
+    Product,
+    Loader,
+    Chat: defineAsyncComponent(() => import("../components/Chat.vue")),
   },
 
-  setup(){
+  setup() {
     let products = ref(null);
 
-    onMounted(async()=>{
+    onMounted(async () => {
       const result = await getProductsApi(3);
-      console.log(result);
       products.value = result;
     });
 
     return {
-      products
-    }
-  }
-
+      products,
+    };
+  },
 };
 </script>

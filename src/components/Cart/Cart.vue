@@ -3,7 +3,8 @@
     <div class="dimmer" :class="{ open: showCart }"  @click="closeCart"/>
     <div class="cart" :class="{ open: showCart }">
       <CartHeader :closeCart="closeCart"/>
-
+      <CartBody :products="products" :reloadCartFn="reloadCartFn"/>
+      <cart-footer  v-if="products" :products="products" @click="closeCart"/>
     </div>
   </div>
 </template>
@@ -13,17 +14,21 @@ import { computed, watchEffect , ref} from "vue";
 import { useStore } from "vuex";
 import CartHeader from '../Cart/CartHeader.vue';
 import {getProductsCartApi} from '../../api/cart';
+import CartBody from '../Cart/CartBody.vue';
+import CartFooter from '../Cart/CartFooter.vue';
 
 export default {
   name: "Cart",
   components:{
-      CartHeader
+      CartHeader, CartBody, CartFooter
   },
   setup() {
     const store = useStore();
     const showCart = computed(() => store.state.showCart);
-    const products = ref(null);
+    let products = ref(null);
+    let reloadCart = ref(false);
 
+    const reloadCartFn = ()=>{ reloadCart.value = !reloadCart.value};
     const closeCart = () => {
       store.commit("setShowCart", false);
     };
@@ -31,17 +36,19 @@ export default {
     const getProductsCart = async ()=>{
       const response = await getProductsCartApi();
       products.value = response;
-      console.log(products);
+      console.log(products.value);
     };
 
     watchEffect(()=>{
       showCart.value;
+      reloadCart.value;
       getProductsCart();
     });
 
     return {
       showCart,
       closeCart,
+      products, reloadCartFn
     };
   },
 };
@@ -72,7 +79,7 @@ export default {
   width: 400px;
   height: 100vh;
   display: flex;
-  justify-content: space-between;
+  
   flex-direction: column;
   box-shadow: 0px 0px 26px 5px rgba(0, 0, 0, 0.75);
   transform: translateX(150%);
