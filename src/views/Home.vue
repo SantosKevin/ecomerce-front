@@ -41,7 +41,7 @@ export default {
     BLayout,
     Product,
     Loader,
-    Chat: defineAsyncComponent(() => import("../components/Chat.vue")),
+    Chat: defineAsyncComponent(() => import("../components/Chat.vue" /* webpackChunkName: "chatttt" */)),
   },
 
   setup() {
@@ -50,6 +50,8 @@ export default {
     onMounted(async () => {
       const result = await getProductsApi(3);
       products.value = result;
+
+      console.log(process.env.API);
     });
 
     return {
